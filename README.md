@@ -1,4 +1,4 @@
-1. **AlphaEngine MVP: 3-Year Forward Equity Signal Regressor**
+1. **AlphaEngine: 3-Year Forward Equity Signal Regressor**
 
 AlphaEngine is a machine learning pipeline designed to predict long-horizon, 3-year cross-sectional equity returns.
 
