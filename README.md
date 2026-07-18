@@ -1,261 +1,625 @@
-1. **AlphaEngine: 3-Year Forward Equity Signal Regressor**
+# AlphaEngine: Long-Horizon Equity Signal Research Framework
 
-AlphaEngine is a machine learning pipeline designed to predict long-horizon, 3-year cross-sectional equity returns.
+AlphaEngine is a machine learning research pipeline designed to predict long-horizon, cross-sectional equity outperformance.
 
-Rather than forecasting absolute price levels or macroeconomic cycles, the model focuses on relative performance by estimating each asset’s expected excess return versus a benchmark, the S&P 500. This enables direct ranking of investment opportunities and systematic portfolio construction based on conviction.
+Rather than forecasting absolute stock prices or macroeconomic cycles, the system estimates each stock’s expected excess return versus a market benchmark. This allows the model to rank investment opportunities and translate those rankings into systematic portfolio construction rules.
 
-This repository represents a Minimum Viable Product for a signal-driven portfolio allocation system, combining momentum, risk, and fundamental features into a unified framework.
+The project began as a minimum viable product for a 3-year forward equity signal. It has since been refactored into a bifurcated research framework with two distinct deployment objectives:
 
-2. **Objective**
+1. **Core Alpha** — a diversified basket designed to capture broad, durable market outperformance.
+2. **Convex Alpha** — a concentrated basket designed to capture public-market power-law winners.
 
-The model answers the following question:
+The key research finding from the current version is that model quality cannot be judged only by global signal metrics. A model that is not the strongest pure ranking signal may still perform best when paired with the portfolio construction policy it was designed for.
 
-Given information available today, which stocks are most likely to outperform the market over the next roughly 3 years, and by how much?
+---
 
-This reframes stock selection as a continuous regression problem rather than a binary classification task, aligning more closely with real-world portfolio construction.
+## Objective
 
-3. **Data Pipeline**
+AlphaEngine answers the question:
+
+> Given information available today, which stocks are most likely to outperform the market over the next roughly 3 years, and by how much?
+
+This reframes stock selection as a continuous regression problem rather than a binary classification task.
+
+The model is trained to predict forward excess return:
+
+```text
+excess_fwd_3y_return = stock_forward_return - benchmark_forward_return
+```
+
+This means the model is not simply predicting whether a stock rises. It is predicting whether a stock outperforms the market over the same forward window.
+
+---
+
+## Current Research Architecture
+
+The current system separates three layers:
+
+```text
+Feature Engineering
+        ↓
+Signal Generation
+        ↓
+Portfolio Construction
+```
+
+Earlier versions used one feature set and one model. The current version tests multiple signal variants and evaluates them under separate portfolio construction policies.
+
+Current V4 signal variants:
+
+```text
+shared_baseline_v4
+core_alpha_v4
+convex_alpha_v4
+```
+
+Current portfolio policies:
+
+```text
+core_alpha:
+    top 20 stocks
+    diversified rank-weighted basket
+
+convex_alpha:
+    top 3 stocks
+    concentrated rank-weighted basket
+```
+
+Notebook 04 evaluates every signal under every portfolio policy. This prevents the project from assuming that a Core-trained model must be used for Core Alpha or that a Convex-trained model must be used for Convex Alpha.
+
+---
+
+## Data Pipeline
 
 Inputs:
 
-Historical equity price data via `yfinance`
+- Historical equity price data from `yfinance`
+- S&P 500 universe metadata
+- Benchmark ETF data, primarily SPY
+- Basic valuation metrics such as P/E ratio and earnings yield
+- Current snapshot metadata for live portfolio output and explanation
 
-Fundamental metrics: P/E ratio, earnings yield
+The pipeline intentionally avoids using current market capitalization as a historical feature. Current market cap is available through snapshot metadata, but historical market cap requires point-in-time share count data. Using today’s market cap or today’s shares outstanding across historical rows would introduce leakage.
 
-Benchmark: SPY / S&P 500 ETF
+---
 
-Target construction:
+## Target Construction
 
 Forward returns are computed over approximately 3 trading years, or about 756 trading days.
 
-The core target is:
+The core modeling target is:
 
-`excess_fwd_3y_return = stock_return - benchmark_return`
+```text
+excess_fwd_3y_return = stock_return - benchmark_return
+```
 
-This means the model is not simply predicting whether a stock goes up. It is predicting whether a stock outperforms the market over the same forward window.
+The transformed training target is:
 
-4. **Methodology: Target Transformation**
+```text
+target = sign(excess_fwd_3y_return) * log(1 + abs(excess_fwd_3y_return))
+```
 
-Equity returns exhibit heavy tails, particularly on the upside. To stabilize training and reduce the influence of extreme outliers, the target is transformed using a symmetric log function:
+This symmetric log transform compresses extreme winners and losers while preserving direction. It helps stabilize training in a return distribution with heavy tails.
 
-`y = sign(x) * log(1 + abs(x))`
+---
 
-This compresses extreme values while preserving directional information.
+## Time-Aware Preprocessing
 
-5. **Methodology: Time-Aware Preprocessing**
+To reduce leakage and autocorrelation from overlapping forward returns, the modeling dataset is downsampled to monthly observations using the last available trading day of each month.
 
-To mitigate leakage from overlapping forward returns, the dataset is downsampled to monthly observations using the last trading day of each month.
+The model uses a time-based split:
 
-This reduces autocorrelation and forces the model to learn generalized cross-sectional relationships rather than memorizing overlapping daily noise.
-
-6. **Methodology: Feature Engineering**
-
-Features are constructed across three layers.
-
-Raw features:
-
-Momentum: 6-month and 12-month returns
-
-Risk: 12-month volatility, drawdown
-
-Valuation: P/E ratio, earnings yield
-
-Cross-sectional features:
-
-Within-date percentile ranks for major features
-
-Comparable rankings across time and market regimes
-
-Composite factor:
-
-A key engineered feature combines value and quality:
-
-`quality_value_combo = earnings_yield_rank + low_vol_rank`
-
-Where:
-
-`earnings_yield_rank` captures relative cheapness
-
-`low_vol_rank` captures relative stability
-
-This avoids scale distortions and eliminates instability from negative earnings.
-
-7. **Methodology: Model**
-
-Algorithm: LightGBM Regressor
-
-Objective: Regression on transformed excess returns
-
-Time-based split:
-
-Train: pre-2018
-
+```text
+Train:      pre-2018
 Validation: 2018–2020
+Test:       2021 onward
+```
 
-Test: 2021 onward
+The validation set is used for model calibration. The test set is held out for out-of-sample signal and strategy evaluation.
 
-8. **Methodology: Calibration**
+---
 
-Predictions are calibrated using Isotonic Regression.
+## Feature Engineering
 
-The calibrator is fitted on validation data only to prevent leakage, then applied to test predictions.
+Features are created in `02_feature_engineering`.
 
-This enforces a monotonic relationship between predicted and realized returns, improving interpretability and aligning predicted magnitudes with observed outcomes.
+The V4 feature set includes:
 
-9. **Notebook Structure**
+### Raw Features
 
-The project is split into three core stages.
+```text
+6-month return
+12-month return
+12-month volatility
+drawdown
+P/E ratio
+earnings yield
+sector metadata
+```
 
-`02_feature_engineering`
+### Cross-Sectional Rank Features
 
-Builds raw, cross-sectional, and composite features.
+Most raw features are converted into within-date percentile ranks. This makes features more comparable across time and market regimes.
 
-`03_model_training_and_signal_validation`
+Examples:
 
-Trains the LightGBM model.
+```text
+ret_6m_rank
+ret_12m_rank
+vol_12m_rank
+drawdown_rank
+low_vol_rank
+earnings_yield_rank
+pe_cheap_rank
+```
 
-Applies validation-only isotonic calibration.
+### Sector-Relative Valuation Features
 
-Validates ranking quality through prediction buckets.
+The V4 pipeline also adds sector-relative valuation features:
 
-Exports scored test predictions.
+```text
+sector_earnings_yield_rank
+sector_pe_cheap_rank
+sector_valuation_rank_combo
+```
 
-`04_strategy_backtest_and_cohort_analysis`
+These features help compare companies against economically similar peers rather than across the full market universe.
 
-Translates model scores into portfolio strategies.
+### Core Alpha Features
 
-Evaluates signal maturation across 1, 3, 6, 12, 24, and 36-month horizons.
+Core Alpha features are designed to support diversified, durable, long-horizon outperformance.
 
-Stress-tests contributor concentration and robustness.
+Examples:
 
-10. **Portfolio Construction**
+```text
+core_quality_value_combo
+core_stability_combo
+core_momentum_quality_combo
+core_defensive_value_combo
+```
 
-The model signal is deployed through two portfolio construction modes rather than a simple low, medium, and high risk ladder.
+Core Alpha emphasizes:
 
-Core Alpha:
+```text
+quality
+valuation
+stability
+lower volatility
+sector-relative cheapness
+```
 
-A diversified rank-weighted basket designed to capture broader, more robust market-beating signal.
+### Convex Alpha Features
+
+Convex Alpha features are designed to support concentrated right-tail selection.
+
+Examples:
+
+```text
+convex_momentum_value_combo
+convex_momentum_vol_combo
+convex_rebound_combo
+convex_value_rebound_combo
+```
+
+Convex Alpha emphasizes:
+
+```text
+momentum
+volatility / optionality
+rebound potential
+valuation support
+right-tail capture
+```
+
+---
+
+## Model
+
+The current model uses:
+
+```text
+Algorithm: LightGBM Regressor
+Objective: Regression on transformed 3-year excess returns
+Calibration: Validation-only isotonic regression
+```
+
+The model predicts transformed excess returns, which are inverted back into return space and then calibrated.
+
+Calibration uses isotonic regression fitted only on the validation set. This avoids test leakage while improving the interpretability of predicted return magnitudes.
+
+---
+
+## Signal Variants
+
+Notebook 03 trains and evaluates three V4 signal variants.
+
+### `shared_baseline_v4`
+
+Uses the shared V4 feature set. This model performed best as a pure global ranking signal in Notebook 03.
+
+### `core_alpha_v4`
+
+Uses shared features plus Core-specific features. This model is designed for diversified top-20 portfolio construction.
+
+### `convex_alpha_v4`
+
+Uses shared features plus Convex-specific features. It removes raw P/E from the shared feature set while retaining ranked and composite valuation features, based on earlier ablation findings that raw P/E introduced brittle behavior.
+
+---
+
+## Portfolio Construction
+
+Notebook 04 translates model scores into portfolio strategies.
+
+The project uses two deployment policies.
+
+### Core Alpha
+
+Core Alpha is a diversified rank-weighted portfolio.
 
 Current configuration:
 
-Top 20 stocks by calibrated model score
+```text
+Top K: 20 stocks
+Weighting: rank-weighted
+Power: 0.6
+Objective: diversified long-horizon outperformance
+```
 
-Rank-based weighting
+Core Alpha is intended to behave more like an actively selected ETF-style basket.
 
-Intended use: dispersed long-horizon alpha capture
+### Convex Alpha
 
-Convex Alpha:
-
-A concentrated high-conviction basket designed to capture public-market power-law winners.
+Convex Alpha is a concentrated rank-weighted portfolio.
 
 Current configuration:
 
-Top 3 stocks by calibrated model score
+```text
+Top K: 3 stocks
+Weighting: rank-weighted
+Power: 0.8
+Objective: right-tail / power-law winner capture
+```
 
-Rank-based weighting
+Convex Alpha is intentionally more concentrated and more sensitive to individual winners.
 
-Intended use: right-tail / asymmetric upside capture
+### Weighting Scheme
 
-Weighting scheme:
+Both strategies use rank-based weighting:
 
-Rank-based exponential weighting is used:
+```text
+weight ∝ rank^power
+```
 
-`weight ∝ rank^power`
+This avoids relying too heavily on raw predicted return magnitudes while still assigning larger weights to higher-conviction names.
 
-This avoids excessive reliance on raw prediction magnitudes while still emphasizing higher-conviction signals.
+---
 
-11. **Results: Out-of-Sample 2021–2022**
+## Out-of-Sample Results
 
-The model demonstrates strong cross-sectional ranking performance.
+The current out-of-sample test period evaluates monthly selection cohorts beginning in 2021.
 
-Key signal validation results:
+Notebook 03 showed that the shared baseline was the strongest pure signal model based on global ranking metrics such as bucket monotonicity and top-bottom spread.
 
-Monotonic realized performance across prediction buckets
+However, Notebook 04 showed that the specialized models performed best when paired with their intended portfolio construction policies.
 
-Approximately 80% spread between top and bottom prediction quintiles
+### 36-Month Portfolio Results
 
-Positive long-horizon excess returns across both strategy modes
+| Portfolio Policy | Winning Signal | Mean Excess Return | Median Excess Return | Hit Rate |
+|---|---:|---:|---:|---:|
+| Core Alpha | `core_alpha_v4` | 1.6591 | 0.6791 | 100.0% |
+| Convex Alpha | `convex_alpha_v4` | 1.1267 | 0.9613 | 91.7% |
 
-12. **Strategy Backtest Summary**
+This is the central result of the V4 research pass:
 
-The backtest evaluates monthly selection cohorts across multiple forward horizons.
+> The specialized Core and Convex models did not dominate as global ranking signals, but they did perform best when deployed through the portfolio construction rules they were designed for.
 
-Core Alpha behaves as the more robust and dispersed strategy:
+That supports the project’s separation between signal validation and portfolio-level evaluation.
 
-Positive excess returns across all tested horizons
+---
 
-Strongest performance over 12–36 month horizons
+## Robustness and Stress Testing
 
-36-month hit rate near 96% versus SPY
+Notebook 04 evaluates:
 
-Remains positive even after removing top contributors
+```text
+1-month, 3-month, 6-month, 12-month, 24-month, and 36-month forward horizons
+top-k sensitivity
+contributor concentration
+dynamic ex-contributor stress tests
+sector exposure
+selection frequency
+```
 
-Convex Alpha behaves as the concentrated right-tail strategy:
+Dynamic ex-contributor tests remove the top 1, top 3, and top 5 contributors for each signal/strategy pairing.
 
-Stronger early separation beginning around the 6-month horizon
+This avoids hardcoding prior winners and makes the stress tests strategy-specific.
 
-Higher 36-month median excess return than Core Alpha
+### Core Alpha Robustness
 
-More sensitive to a small number of large winners
+Core Alpha remains more diversified and resilient.
 
-Performance degrades sharply when top contributors are removed
+At the 36-month horizon, `core_alpha_v4` under Core construction produced:
 
-These results suggest the model supports two distinct deployment modes:
+```text
+Mean excess return:   1.6591
+Median excess return: 0.6791
+Hit rate:             100.0%
+```
 
-A diversified Core Alpha basket for more stable long-horizon outperformance
+After removing its top contributor:
 
-A concentrated Convex Alpha basket for public-market power-law capture
+```text
+Mean excess return:   1.2418
+Median excess return: 0.6631
+Hit rate:             100.0%
+```
 
-13. **Limitations**
+This suggests Core Alpha is not simply one large winner disguised as a portfolio.
 
+### Convex Alpha Robustness
+
+Convex Alpha behaves like a concentrated power-law strategy.
+
+At the 36-month horizon, `convex_alpha_v4` under Convex construction produced:
+
+```text
+Mean excess return:   1.1267
+Median excess return: 0.9613
+Hit rate:             91.7%
+```
+
+After removing its top contributor:
+
+```text
+Mean excess return:   0.4870
+Median excess return: 0.4863
+Hit rate:             75.0%
+```
+
+After removing its top 3 contributors:
+
+```text
+Mean excess return:   0.0635
+Median excess return: -0.2234
+Hit rate:             33.3%
+```
+
+This confirms that Convex Alpha is highly contributor-sensitive, which is expected for a concentrated right-tail strategy.
+
+---
+
+## Current Portfolio Generation
+
+Notebook 05 has been reworked into a portfolio generation and interpretability notebook.
+
+It can generate current Core Alpha and Convex Alpha portfolio CSVs using the trained V4 models.
+
+Outputs include:
+
+```text
+current_core_alpha_portfolio_YYYYMMDD.csv
+current_convex_alpha_portfolio_YYYYMMDD.csv
+current_core_alpha_shap_details_YYYYMMDD.csv
+current_convex_alpha_shap_details_YYYYMMDD.csv
+current_portfolio_methodology_YYYYMMDD.md
+```
+
+The portfolio CSVs include:
+
+```text
+ticker
+company
+sector
+sub-industry
+portfolio weight
+model score
+current metadata
+SHAP-based reason column
+not-financial-advice disclaimer
+```
+
+The SHAP reason column explains which features most positively contributed to each holding’s score, along with any major negative contributors.
+
+Example structure:
+
+```text
+Positive drivers: momentum composite; sector-relative valuation; low-volatility rank
+Watchouts: drawdown severity; raw volatility
+```
+
+This makes the output more interpretable and closer to an ETF-style holdings report.
+
+---
+
+## Notebook Structure
+
+### `01_data_ingestion`
+
+Downloads and saves:
+
+```text
+equity price data
+benchmark price data
+S&P 500 metadata
+current ticker snapshot metadata
+```
+
+### `02_feature_engineering`
+
+Builds:
+
+```text
+raw return/risk/valuation features
+cross-sectional rank features
+sector-relative valuation features
+Core Alpha composite features
+Convex Alpha composite features
+feature family definitions
+```
+
+Outputs:
+
+```text
+features_v4.parquet
+feature_families_v4.json
+```
+
+### `03_model_training_and_signal_validation`
+
+Trains:
+
+```text
+shared_baseline_v4
+core_alpha_v4
+convex_alpha_v4
+```
+
+Performs:
+
+```text
+time-based train/validation/test split
+LightGBM training
+validation-only isotonic calibration
+prediction bucket validation
+signal comparison
+model artifact export
+```
+
+Outputs scored test predictions for Notebook 04.
+
+### `04_strategy_backtest_and_cohort_analysis`
+
+Evaluates all signal variants under both portfolio policies.
+
+Performs:
+
+```text
+multi-horizon cohort backtesting
+top-k sensitivity
+contributor concentration analysis
+dynamic ex-contributor stress tests
+sector exposure analysis
+promotion decision summary
+```
+
+### `05_portfolio_generation_and_interpretability`
+
+Generates current portfolio candidates and explanations.
+
+Outputs:
+
+```text
+Core Alpha portfolio CSV
+Convex Alpha portfolio CSV
+SHAP detail CSVs
+methodology note
+feature importance summaries
+```
+
+---
+
+## Key Findings
+
+This research pass produced several important findings:
+
+1. **The V4 shared feature set improved the base signal.**
+
+   The shared baseline was the strongest pure global ranking model in Notebook 03.
+
+2. **Specialized models were not globally superior.**
+
+   The Core and Convex models did not dominate the shared baseline across all signal-validation metrics.
+
+3. **Specialized models worked best at the portfolio level.**
+
+   When tested under their intended portfolio construction policies, `core_alpha_v4` and `convex_alpha_v4` produced the best 36-month results.
+
+4. **Core Alpha is more robust and diversified.**
+
+   Core Alpha retained strong performance after removing its top contributor.
+
+5. **Convex Alpha is more contributor-sensitive.**
+
+   Convex Alpha depends heavily on a small number of winners, consistent with its right-tail mandate.
+
+6. **Signal validation and portfolio validation should be separated.**
+
+   A globally cleaner ranking model is not always the best model for a specific deployment objective.
+
+---
+
+## Limitations
+
+This project is a research prototype and has several important limitations:
+
+```text
 The out-of-sample period is relatively short.
-
+The 36-month forward return cohorts overlap.
 The dataset may contain survivorship bias depending on universe construction.
-
 Transaction costs, slippage, taxes, and turnover are not yet modeled.
-
 The current backtest evaluates monthly selection cohorts, not a full live NAV simulation.
-
-The feature set is intentionally limited for MVP scope.
-
+The feature set is still limited relative to institutional equity models.
+Historical market capitalization is not included because a point-in-time source is not yet available.
 Concentrated strategies are highly contributor-sensitive.
+yfinance data may contain missing values, revisions, or vendor inconsistencies.
+```
 
-14. **Future Work**
+The results should therefore be interpreted as promising research evidence, not as proof of a deployable investment strategy.
 
-Full rolling portfolio simulation with overlapping 3-year cohorts
+---
 
-Turnover, transaction cost, and slippage modeling
+## Future Work
 
+Planned extensions:
+
+```text
+Full rolling NAV simulation
+Overlapping cohort capital-path modeling
+Turnover and transaction cost modeling
+Slippage and tax assumptions
 Sector-neutral and sector-capped portfolio construction
+Historical point-in-time market cap integration
+Expanded fundamentals: growth, profitability, margins, leverage, free cash flow
+Balance sheet and cash flow statement features
+Macro regime features: rates, inflation, VIX, liquidity
+Walk-forward retraining
+Universe survivorship-bias correction
+Separate model objectives for Core and Convex Alpha
+Portfolio optimization beyond rank weighting
+Monthly or quarterly shorter-horizon model variants
+```
 
-Expanded fundamentals: profitability, growth, balance sheet metrics
+---
 
-Macro regime features: interest rates, VIX, inflation, liquidity conditions
+## Disclaimer
 
-Permutation importance and SHAP analysis
+This project is a personal research prototype.
 
-Separate optimization paths for Core Alpha robustness and Convex Alpha right-tail capture
+It is not financial advice, investment advice, or a recommendation to buy or sell any security. Results are for exploratory and educational purposes only.
 
-Monthly or quarterly shorter-horizon model variant
+Backtested performance is hypothetical and does not account for all real-world trading frictions, including transaction costs, slippage, taxes, liquidity constraints, borrow constraints, or behavioral implementation risk.
 
-15. **Disclaimer**
+This project is personal work and is not related to my employer.
 
-This project is a research prototype and not an investment strategy. Results are for exploratory and educational purposes only and should not be interpreted as financial advice.
+---
 
-This project is personal work and not related to my employer.
+## Summary
 
-16. **Summary**
+AlphaEngine demonstrates:
 
-This project demonstrates:
+```text
+end-to-end machine learning pipeline design
+time-aware modeling on financial data
+cross-sectional feature engineering
+target transformation for heavy-tailed returns
+validation-only model calibration
+signal-family research design
+portfolio construction from predictive signals
+cohort-based strategy backtesting
+dynamic contributor stress testing
+SHAP-based portfolio interpretability
+current portfolio CSV generation
+```
 
-End-to-end machine learning pipeline design
-
-Time-aware modeling on financial data
-
-Cross-sectional feature engineering
-
-Validation-only model calibration
-
-Translation of predictive signals into distinct portfolio strategies
-
-Strategy-level robustness testing through cohort backtesting
+The current version reframes AlphaEngine from a single-model MVP into a broader equity signal research framework that separates feature engineering, signal generation, portfolio construction, and interpretability.
