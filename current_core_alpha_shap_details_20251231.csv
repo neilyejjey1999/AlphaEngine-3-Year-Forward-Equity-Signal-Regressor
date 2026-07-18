@@ -1,0 +1,101 @@
+portfolio_name,ticker,company,driver_type,feature,feature_label,feature_value,shap_value
+core_alpha,NOW,ServiceNow,positive,quality_value_combo,quality/value composite,0.3129526235798781,0.09798076206441214
+core_alpha,NOW,ServiceNow,positive,sector_pe_cheap_rank,sector-relative cheap P/E,0.2435897435897436,0.07447247351318649
+core_alpha,NOW,ServiceNow,positive,pe_ratio,P/E ratio,57.88024,0.045849047691078615
+core_alpha,NOW,ServiceNow,negative,low_vol_rank,low-volatility rank,0.2075848303393214,-0.012815407189700945
+core_alpha,NOW,ServiceNow,negative,core_defensive_value_combo,Core defensive value composite,0.44854868576100815,-0.003878327194008857
+core_alpha,PSKY,Paramount Skydance Corporation,positive,vol_12m,12M volatility,0.03738730973523742,0.1654456827984656
+core_alpha,PSKY,Paramount Skydance Corporation,positive,quality_value_combo,quality/value composite,0.053868406328496134,0.10382476956978252
+core_alpha,PSKY,Paramount Skydance Corporation,positive,quality_value_combo_ranked,ranked quality/value composite,0.053868406328496134,0.04435857571300848
+core_alpha,PSKY,Paramount Skydance Corporation,negative,pe_ratio,P/E ratio,391.33334,-0.05700139278597048
+core_alpha,PSKY,Paramount Skydance Corporation,negative,sector_valuation_rank_combo,sector-relative valuation composite,0.041666666666666664,-0.010563838018995702
+core_alpha,VST,Vistra Corp.,positive,vol_12m,12M volatility,0.04151230433431265,0.1388920460305882
+core_alpha,VST,Vistra Corp.,positive,quality_value_combo,quality/value composite,0.09949881549029174,0.06189122550591515
+core_alpha,VST,Vistra Corp.,positive,low_vol_rank,low-volatility rank,0.0239520958083832,0.040747400156875606
+core_alpha,VST,Vistra Corp.,negative,sector_valuation_rank_combo,sector-relative valuation composite,0.03225806451612903,-0.005432360473938818
+core_alpha,VST,Vistra Corp.,negative,ret_6m_rank,6M momentum rank,0.14143426294820718,-0.0015895693810106114
+core_alpha,TSLA,"Tesla, Inc.",positive,vol_12m,12M volatility,0.03994913313360585,0.14370622141339562
+core_alpha,TSLA,"Tesla, Inc.",positive,quality_value_combo,quality/value composite,0.03589639805875323,0.08570101551236767
+core_alpha,TSLA,"Tesla, Inc.",positive,quality_value_combo_ranked,ranked quality/value composite,0.03589639805875323,0.03937959087606921
+core_alpha,TSLA,"Tesla, Inc.",negative,pe_ratio,P/E ratio,370.94443,-0.03888529844863401
+core_alpha,TSLA,"Tesla, Inc.",negative,drawdown,drawdown,-0.08197926688540047,-0.0038658567809812874
+core_alpha,ANET,Arista Networks,positive,vol_12m,12M volatility,0.03596095912140199,0.09470597060569626
+core_alpha,ANET,Arista Networks,positive,quality_value_combo,quality/value composite,0.15929969087669593,0.06589758897965872
+core_alpha,ANET,Arista Networks,positive,pe_ratio,P/E ratio,59.937954,0.041833658593303756
+core_alpha,ANET,Arista Networks,negative,core_momentum_quality_combo,Core momentum/quality composite,0.9258780878675748,-0.006852546798367392
+core_alpha,ANET,Arista Networks,negative,sector_valuation_rank_combo,sector-relative valuation composite,0.43481618782823606,-0.002495165943584329
+core_alpha,ORCL,Oracle Corporation,positive,vol_12m,12M volatility,0.0387202969911407,0.1578451148795026
+core_alpha,ORCL,Oracle Corporation,positive,quality_value_combo,quality/value composite,0.3917929548457756,0.053405491911949626
+core_alpha,ORCL,Oracle Corporation,positive,low_vol_rank,low-volatility rank,0.0359281437125748,0.03266829428088926
+core_alpha,ORCL,Oracle Corporation,negative,core_momentum_quality_combo,Core momentum/quality composite,0.778899220402312,-0.00531304938086583
+core_alpha,ORCL,Oracle Corporation,negative,ret_12m_rank,12M momentum rank,0.654690618762475,-0.0035281194295081132
+core_alpha,AMAT,Applied Materials,positive,sector_earnings_yield_rank,sector-relative earnings yield,0.37349397590361444,0.090530589612275
+core_alpha,AMAT,Applied Materials,positive,quality_value_combo,quality/value composite,0.3245794692920323,0.07053799946423063
+core_alpha,AMAT,Applied Materials,positive,sector_pe_cheap_rank,sector-relative cheap P/E,0.3846153846153846,0.0531434997128171
+core_alpha,AMAT,Applied Materials,negative,core_momentum_quality_combo,Core momentum/quality composite,1.2408286442488914,-0.004637105474125901
+core_alpha,AMAT,Applied Materials,negative,valuation_rank_combo,valuation composite,0.3953745879155447,-0.004606833744134924
+core_alpha,AXON,Axon Enterprise,positive,vol_12m,12M volatility,0.033210951302835134,0.10506354764549224
+core_alpha,AXON,Axon Enterprise,positive,quality_value_combo,quality/value composite,0.1037289238620175,0.075417938818016
+core_alpha,AXON,Axon Enterprise,positive,core_defensive_value_combo,Core defensive value composite,0.10133786481091869,0.031851965166502044
+core_alpha,AXON,Axon Enterprise,negative,pe_ratio,P/E ratio,270.36914,-0.022972407559279123
+core_alpha,AXON,Axon Enterprise,negative,sector_pe_cheap_rank,sector-relative cheap P/E,0.0,-0.00967600385054891
+core_alpha,LITE,Lumentum,positive,vol_12m,12M volatility,0.048978483645158735,0.15774043861481524
+core_alpha,LITE,Lumentum,positive,quality_value_combo,quality/value composite,0.023880668087284722,0.08545783819408508
+core_alpha,LITE,Lumentum,positive,quality_value_combo_ranked,ranked quality/value composite,0.023880668087284722,0.03940119609445182
+core_alpha,LITE,Lumentum,negative,pe_ratio,P/E ratio,256.1805,-0.042776277959994446
+core_alpha,LITE,Lumentum,negative,sector_pe_cheap_rank,sector-relative cheap P/E,0.05128205128205132,-0.03854489174328168
+core_alpha,PLTR,Palantir Technologies,positive,vol_12m,12M volatility,0.042226315735494145,0.1742183145528974
+core_alpha,PLTR,Palantir Technologies,positive,quality_value_combo,quality/value composite,0.04581294667126981,0.08385068503616139
+core_alpha,PLTR,Palantir Technologies,positive,quality_value_combo_ranked,ranked quality/value composite,0.04581294667126981,0.03386990933913645
+core_alpha,PLTR,Palantir Technologies,negative,pe_ratio,P/E ratio,232.36508,-0.04565050071208465
+core_alpha,PLTR,Palantir Technologies,negative,sector_pe_cheap_rank,sector-relative cheap P/E,0.0641025641025641,-0.04559749717238601
+core_alpha,SNPS,Synopsys,positive,vol_12m,12M volatility,0.03515720001658995,0.12066282511492023
+core_alpha,SNPS,Synopsys,positive,quality_value_combo,quality/value composite,0.1473950706936028,0.0404022251060554
+core_alpha,SNPS,Synopsys,positive,pe_ratio,P/E ratio,68.95399,0.03038780244107225
+core_alpha,SNPS,Synopsys,negative,core_defensive_value_combo,Core defensive value composite,0.23853497823629843,-0.002699469504118194
+core_alpha,SNPS,Synopsys,negative,valuation_rank_combo,valuation composite,0.15770356762379312,-0.0011622606712479615
+core_alpha,TPL,Texas Pacific Land Corporation,positive,quality_value_combo,quality/value composite,0.20721975532037312,0.07371916066471944
+core_alpha,TPL,Texas Pacific Land Corporation,positive,vol_12m,12M volatility,0.030348565613633645,0.07068499191268629
+core_alpha,TPL,Texas Pacific Land Corporation,positive,sector_earnings_yield_rank,sector-relative earnings yield,0.045454545454545456,0.05656782816655816
+core_alpha,TPL,Texas Pacific Land Corporation,negative,drawdown_rank,stability / low-drawdown rank,0.10934393638170974,-0.003286438779491145
+core_alpha,TPL,Texas Pacific Land Corporation,negative,low_vol_rank,low-volatility rank,0.11576846307385225,-0.0018894875095829297
+core_alpha,TTD,Trade Desk (The),positive,vol_12m,12M volatility,0.04683801535547946,0.24447574381454543
+core_alpha,TTD,Trade Desk (The),positive,ret_6m,6M return,-0.4840989652102521,0.028095075999370504
+core_alpha,TTD,Trade Desk (The),positive,low_vol_rank,low-volatility rank,0.0119760479041916,0.027967314111613358
+core_alpha,TTD,Trade Desk (The),negative,quality_value_combo,quality/value composite,0.5646599445244699,-0.013671789832664089
+core_alpha,TTD,Trade Desk (The),negative,sector_earnings_yield_rank,sector-relative earnings yield,0.6666666666666666,-0.01106449979165425
+core_alpha,AVGO,Broadcom,positive,vol_12m,12M volatility,0.03335858713121551,0.0896575357369774
+core_alpha,AVGO,Broadcom,positive,pe_ratio,P/E ratio,79.40234,0.04417049148886148
+core_alpha,AVGO,Broadcom,positive,sector_pe_cheap_rank,sector-relative cheap P/E,0.14102564102564108,0.04186529388000518
+core_alpha,AVGO,Broadcom,negative,drawdown,drawdown,-0.160320995156211,-0.004797872113713517
+core_alpha,AVGO,Broadcom,negative,core_momentum_quality_combo,Core momentum/quality composite,1.0287975094143333,-0.004312303711733586
+core_alpha,COIN,Coinbase,positive,vol_12m,12M volatility,0.04541039990057418,0.09627245847111761
+core_alpha,COIN,Coinbase,positive,quality_value_combo,quality/value composite,0.16308536009491947,0.042028203420388446
+core_alpha,COIN,Coinbase,positive,core_defensive_value_combo,Core defensive value composite,0.058825206729398324,0.03492563808732897
+core_alpha,COIN,Coinbase,negative,sector_pe_cheap_rank,sector-relative cheap P/E,0.02898550724637683,-0.05016324656816157
+core_alpha,COIN,Coinbase,negative,sector_valuation_rank_combo,sector-relative valuation composite,0.07184265010351969,-0.01847275505096625
+core_alpha,TECH,Bio-Techne,positive,quality_value_combo,quality/value composite,0.20743403848366887,0.08334966829920404
+core_alpha,TECH,Bio-Techne,positive,pe_ratio,P/E ratio,111.75472,0.04490167380396421
+core_alpha,TECH,Bio-Techne,positive,vol_12m,12M volatility,0.026975176311489556,0.03922714891306213
+core_alpha,TECH,Bio-Techne,negative,sector_pe_cheap_rank,sector-relative cheap P/E,0.0,-0.024615093574754193
+core_alpha,TECH,Bio-Techne,negative,low_vol_rank,low-volatility rank,0.1696606786427146,-0.020085852285223443
+core_alpha,XYZ,"Block, Inc.",positive,vol_12m,12M volatility,0.03361393954316663,0.1065035654296887
+core_alpha,XYZ,"Block, Inc.",positive,quality_value_combo,quality/value composite,0.37209477664948437,0.06419996470721907
+core_alpha,XYZ,"Block, Inc.",positive,sector_pe_cheap_rank,sector-relative cheap P/E,0.4871794871794872,0.05068725366106023
+core_alpha,XYZ,"Block, Inc.",negative,pe_ratio,P/E ratio,33.933334,-0.014099339306897558
+core_alpha,XYZ,"Block, Inc.",negative,earnings_yield,earnings yield,0.02946954755462578,-0.00873901340744484
+core_alpha,NVDA,Nvidia,positive,sector_earnings_yield_rank,sector-relative earnings yield,0.3614457831325301,0.07190697613157282
+core_alpha,NVDA,Nvidia,positive,quality_value_combo,quality/value composite,0.2866791268357916,0.054090682329118095
+core_alpha,NVDA,Nvidia,positive,sector_pe_cheap_rank,sector-relative cheap P/E,0.3717948717948718,0.052947536982160336
+core_alpha,NVDA,Nvidia,negative,core_momentum_quality_combo,Core momentum/quality composite,1.1012472018411592,-0.003271167017443353
+core_alpha,NVDA,Nvidia,negative,drawdown_rank,stability / low-drawdown rank,0.6401590457256461,-0.003184163097507925
+core_alpha,BX,Blackstone Inc.,positive,sector_earnings_yield_rank,sector-relative earnings yield,0.12857142857142856,0.06674830382685236
+core_alpha,BX,Blackstone Inc.,positive,pe_ratio,P/E ratio,33.354008,0.05316272759803481
+core_alpha,BX,Blackstone Inc.,positive,sector_valuation_rank_combo,sector-relative valuation composite,0.24451345755693576,0.022823308095592857
+core_alpha,BX,Blackstone Inc.,negative,quality_value_combo,quality/value composite,0.5795923064407963,-0.006267513486620877
+core_alpha,BX,Blackstone Inc.,negative,core_momentum_quality_combo,Core momentum/quality composite,0.9354025982078598,-0.0017527076710529557
+core_alpha,FICO,Fair Isaac,positive,quality_value_combo,quality/value composite,0.3305040019364849,0.06389269137734442
+core_alpha,FICO,Fair Isaac,positive,vol_12m,12M volatility,0.029762808385040394,0.04832693174015475
+core_alpha,FICO,Fair Isaac,positive,sector_pe_cheap_rank,sector-relative cheap P/E,0.39743589743589747,0.04568336472708702
+core_alpha,FICO,Fair Isaac,negative,pe_ratio,P/E ratio,39.68651,-0.019906129675057647
+core_alpha,FICO,Fair Isaac,negative,low_vol_rank,low-volatility rank,0.1217564870259481,-0.004820797933280328

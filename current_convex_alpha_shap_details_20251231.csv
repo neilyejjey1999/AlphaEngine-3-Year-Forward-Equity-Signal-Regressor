@@ -1,0 +1,16 @@
+portfolio_name,ticker,company,driver_type,feature,feature_label,feature_value,shap_value
+convex_alpha,PSKY,Paramount Skydance Corporation,positive,vol_12m,12M volatility,0.03738730973523742,0.16276525335561173
+convex_alpha,PSKY,Paramount Skydance Corporation,positive,quality_value_combo,quality/value composite,0.053868406328496134,0.14688446523629128
+convex_alpha,PSKY,Paramount Skydance Corporation,positive,quality_value_combo_ranked,ranked quality/value composite,0.053868406328496134,0.03764232721049483
+convex_alpha,PSKY,Paramount Skydance Corporation,negative,earnings_yield_rank,earnings yield rank,0.005964214711729622,-0.014940923624928354
+convex_alpha,PSKY,Paramount Skydance Corporation,negative,pe_cheap_rank,cheap P/E rank,0.00421940928270037,-0.011810477744301344
+convex_alpha,TPL,Texas Pacific Land Corporation,positive,quality_value_combo,quality/value composite,0.20721975532037312,0.09021082918130738
+convex_alpha,TPL,Texas Pacific Land Corporation,positive,vol_12m,12M volatility,0.030348565613633645,0.08060701541244712
+convex_alpha,TPL,Texas Pacific Land Corporation,positive,sector_earnings_yield_rank,sector-relative earnings yield,0.045454545454545456,0.04537144221103035
+convex_alpha,TPL,Texas Pacific Land Corporation,negative,drawdown_severity_rank,drawdown severity rank,0.8906560636182903,-0.0019244850830470893
+convex_alpha,TPL,Texas Pacific Land Corporation,negative,convex_rebound_combo,Convex rebound composite,0.9703373385186888,-0.0013839940670283422
+convex_alpha,XYZ,"Block, Inc.",positive,vol_12m,12M volatility,0.03361393954316663,0.11525085027600152
+convex_alpha,XYZ,"Block, Inc.",positive,quality_value_combo,quality/value composite,0.37209477664948437,0.09958482921348087
+convex_alpha,XYZ,"Block, Inc.",positive,sector_pe_cheap_rank,sector-relative cheap P/E,0.4871794871794872,0.05192916746052063
+convex_alpha,XYZ,"Block, Inc.",negative,sector_valuation_rank_combo,sector-relative valuation composite,0.9570590052517765,-0.007551681274763693
+convex_alpha,XYZ,"Block, Inc.",negative,vol_12m_rank,volatility rank,0.9181636726546906,-0.00381187594096887
